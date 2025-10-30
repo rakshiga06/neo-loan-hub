@@ -22,6 +22,8 @@ const Signup = () => {
     maritalStatus: "",
     contact: "",
     email: "",
+    password: "",
+    confirmPassword: "",
     address: "",
     // Financial
     existingLoans: "",

@@ -117,6 +117,29 @@ const PersonalDetails = ({ formData, updateFormData }: PersonalDetailsProps) => 
         />
       </div>
 
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="password">Password *</Label>
+          <Input
+            id="password"
+            type="password"
+            value={formData.password}
+            onChange={(e) => handleChange("password", e.target.value)}
+            placeholder="Enter password"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="confirmPassword">Confirm Password *</Label>
+          <Input
+            id="confirmPassword"
+            type="password"
+            value={formData.confirmPassword}
+            onChange={(e) => handleChange("confirmPassword", e.target.value)}
+            placeholder="Confirm password"
+          />
+        </div>
+      </div>
+
       <div className="space-y-2">
         <Label htmlFor="address">Permanent Address *</Label>
         <Textarea
