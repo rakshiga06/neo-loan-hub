@@ -1,3 +1,6 @@
+
+
+
 // import { Input } from "@/components/ui/input";
 // import { Label } from "@/components/ui/label";
 // import { Textarea } from "@/components/ui/textarea";
@@ -348,14 +351,15 @@ const PersonalDetails = ({ formData, updateFormData }: PersonalDetailsProps) => 
       if (!token) {
         const regPayload = {
           full_name: formData.fullName || "",
-          email: formData.email,
-          contact_number: formData.contact || "",
-          password: formData.password || "Passw0rd1!",
           date_of_birth: formData.dob ? formData.dob.slice(0, 10) : "",
-          permanent_address: formData.address || "",
           gender: formData.gender ? formData.gender.charAt(0).toUpperCase() + formData.gender.slice(1) : "",
-          marital_status: formData.maritalStatus ? formData.maritalStatus.charAt(0).toUpperCase() + formData.maritalStatus.slice(1) : "",
           nationality: formData.nationality || "",
+          marital_status: formData.maritalStatus ? formData.maritalStatus.charAt(0).toUpperCase() + formData.maritalStatus.slice(1) : "",
+          contact_number: formData.contact || "",
+          email: formData.email,
+          password: formData.password || "Passw0rd1!",
+          permanent_address: formData.address || "",
+          
         };
 
         const regRes = await fetch("http://localhost:5000/api/auth/register", {
@@ -546,16 +550,8 @@ const PersonalDetails = ({ formData, updateFormData }: PersonalDetailsProps) => 
         />
       </div>
 
-      {/* Subject (optional) */}
-      <div className="space-y-2">
-        <Label htmlFor="subject">Subject</Label>
-        <Input
-          id="subject"
-          value={formData.subject || ""}
-          onChange={(e) => handleChange("subject", e.target.value)}
-          placeholder="Enter subject (optional)"
-        />
-      </div>
+     
+     
 
       <Button onClick={handleProfileSave}>Save Personal Details</Button>
     </div>

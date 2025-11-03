@@ -63,7 +63,7 @@ def register():
             full_name=data['full_name'],
             email=data['email'],
             contact_number=data.get('contact_number') or data.get('phone'),  # handle both
-            date_of_birth=datetime.strptime(data['date_of_birth'], '%Y-%m-%d').date() if data.get('date_of_birth') else None,
+            date_of_birth=datetime.strptime(data['date_of_birth'], '%Y-%m-%d').date() if data.get   ('date_of_birth') else None,
             gender=data.get('gender'),
             nationality=data.get('nationality'),
             marital_status=data.get('marital_status'),
