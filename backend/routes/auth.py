@@ -1,8 +1,19 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from models import db, User
+# from models import db, User
 from datetime import datetime
 import re
+from models import db, PersonalDetails as User 
+
+
+
+def camel_to_snake(name: str) -> str:
+    return re.sub(r'(?<!^)(?=[A-Z])', '_', name).lower()
+
+def normalize_keys(d: dict) -> dict:
+    if not isinstance(d, dict):
+        return d
+    return {camel_to_snake(k): normalize_keys(v) if isinstance(v, dict) else v for k, v in d.items()}
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -23,14 +34,18 @@ def validate_password(password):
 @auth_bp.route('/register', methods=['POST'])
 def register():
     try:
-        data = request.get_json()
-        
+        # data = request.get_json()
+        data = normalize_keys(request.get_json() or {})
         # Validate required fields
-        required_fields = ['first_name', 'last_name', 'email', 'phone', 'password']
+        # required_fields = ['full_name', 'email', 'contact_number', 'password']
+        # for field in required_fields:
+        #     if not data.get(field):
+        #         return jsonify({'error': f'{field} is required'}), 400
+        required_fields = ['full_name', 'email', 'contact_number', 'password', 'gender', 'marital_status', 'nationality']
         for field in required_fields:
             if not data.get(field):
                 return jsonify({'error': f'{field} is required'}), 400
-        
+
         # Validate email format
         if not validate_email(data['email']):
             return jsonify({'error': 'Invalid email format'}), 400
@@ -43,16 +58,20 @@ def register():
         if User.query.filter_by(email=data['email']).first():
             return jsonify({'error': 'User with this email already exists'}), 400
         
-        # Create new user
+        # 
         user = User(
-            first_name=data['first_name'],
-            last_name=data['last_name'],
+            full_name=data['full_name'],
             email=data['email'],
-            phone=data['phone'],
+            contact_number=data.get('contact_number') or data.get('phone'),  # handle both
             date_of_birth=datetime.strptime(data['date_of_birth'], '%Y-%m-%d').date() if data.get('date_of_birth') else None,
-            address=data.get('address')
+            gender=data.get('gender'),
+            nationality=data.get('nationality'),
+            marital_status=data.get('marital_status'),
+            permanent_address=data.get('permanent_address') or data.get('address')
         )
         user.set_password(data['password'])
+
+        
         
         db.session.add(user)
         db.session.commit()
@@ -164,3 +183,4 @@ def verify_token():
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+

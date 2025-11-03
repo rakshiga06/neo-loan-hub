@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -22,7 +23,10 @@ const Signup = () => {
     maritalStatus: "",
     contact: "",
     email: "",
+    password: "",
+    confirmPassword: "",
     address: "",
+    
     // Financial
     existingLoans: "",
     monthlyEMI: "",
@@ -54,14 +58,35 @@ const Signup = () => {
 
   const progress = (completedSections.length / 4) * 100;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (completedSections.length < 4) {
       toast.error("Please complete all sections");
       return;
     }
-    toast.success("Registration successful! Please login.");
-    navigate("/login");
+  
+    try {
+      const response = await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          // ensure it's a string
+        })
+      });
+  
+      if (!response.ok) {
+        const error = await response.json();
+        toast.error(error.msg || "Something went wrong");
+        return;
+      }
+  
+      toast.success("Registration successful! Please login.");
+      navigate("/login");
+    } catch (err) {
+      toast.error("Network error, please try again");
+    }
   };
+  
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">

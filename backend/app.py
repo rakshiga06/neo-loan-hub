@@ -8,20 +8,33 @@ from datetime import datetime, timedelta
 import os
 from functools import wraps
 import logging
+from models import db  # import the global instance
+
+from flask_cors import CORS   # <— add this
+
+
+
+
 
 # Initialize Flask app
 app = Flask(__name__)
+CORS(app)  # <— enable CORS for all routes
+
 
 # Configuration
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-change-in-production')
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'mysql+pymysql://root:Iitian@2024@localhost/loan_management_system')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Iitian%402024@localhost/loan_management_system'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'mysql+pymysql://root:mysql12345@localhost/banking_system')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'jwt-secret-string-change-in-production')
+# JWT configuration
+app.config['JWT_TOKEN_LOCATION'] = ['headers']
+app.config['JWT_HEADER_TYPE'] = 'Bearer'
+
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
 
 # Initialize extensions
-db = SQLAlchemy(app)
+# db = SQLAlchemy(app)
+db.init_app(app)
 migrate = Migrate(app, db)
 jwt = JWTManager(app)
 CORS(app)
@@ -31,7 +44,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Import models
-from models import User, FinancialInfo, KYCDocument, AdminBank, LoanProduct, Loan
+# from models import User, FinancialInfo, KYCDocument, AdminBank, LoanProduct, Loan
+from models import PersonalDetails, FinancialDetails, EmploymentDetails, UserDocuments, OTPVerification, AdminBank, LoanProduct, Loan
 
 # Import routes
 from routes.auth import auth_bp
@@ -60,7 +74,6 @@ def health_check():
         'timestamp': datetime.utcnow().isoformat()
     })
 
-# Error handlers
 @app.errorhandler(404)
 def not_found(error):
     return jsonify({'error': 'Not found'}), 404
@@ -77,15 +90,15 @@ def bad_request(error):
 if __name__ == '__main__':
     try:
         with app.app_context():
-            # Test database connection first
+            
             db.engine.connect()
-            print("✅ Database connection successful!")
-            # Don't create tables since they already exist from SQL script
-            # db.create_all()
+            print(" Database connection successful!")
+           
     except Exception as e:
-        print(f"❌ Database connection failed: {e}")
+        print(f" Database connection failed: {e}")
         print("Please check your MySQL service and database configuration.")
         exit(1)
     
     print("🚀 Starting Flask server on http://localhost:5000")
     app.run(debug=True, host='0.0.0.0', port=5000)
+

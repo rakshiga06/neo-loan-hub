@@ -10,10 +10,10 @@ import { User, Lock, FileText } from "lucide-react";
 
 const Profile = () => {
   const [personalData, setPersonalData] = useState({
-    fullName: "John Doe",
-    email: "john.doe@example.com",
-    contact: "+91 9876543210",
-    address: "123 Main Street, Mumbai, Maharashtra - 400001",
+    fullName: "Rakshi",
+    email: "rakshi06@gmail.com",
+    contact: "+91 1234567890",
+    address: "chennai",
   });
 
   const [passwordData, setPasswordData] = useState({
